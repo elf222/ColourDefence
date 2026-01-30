@@ -104,7 +104,7 @@ def _update_collisions(reg, state):
             state["hits"] += 1
 
             # destroy bullet and spawn a new one (deferred via commands)
-            enqueue(cmd_buf, cmd_destroy(b))
+            enqueue(cmd_buf, cmd_destroy(b), S.BULLET_SPAWN_AT_HIT)
 
             new_x = random.uniform(S.BULLET_RADIUS, S.SCREEN_W - S.BULLET_RADIUS)
             new_y = random.uniform(S.BULLET_RADIUS, S.SCREEN_H - S.BULLET_RADIUS)
