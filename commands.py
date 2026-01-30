@@ -9,8 +9,8 @@ from ecs import create_entity, destroy_entity
 def make_command_buffer():
     return []
 
-def enqueue(cmd_buf, cmd):
-    cmd_buf.append(cmd)
+def enqueue(cmd_buf, cmd, n=1):
+    cmd_buf.extend([cmd] * n)
 
 # --- command constructors (plain dicts) ---
 
