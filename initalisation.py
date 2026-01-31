@@ -1,7 +1,6 @@
 import settings as S
 from commands import cmd_spawn_bullet, cmd_spawn_player, enqueue, enqueue_n, make_command_buffer
 from ecs import make_registry
-from helpers import random_vel
 
 def init_game():
     reg = make_registry()
