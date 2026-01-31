@@ -1,8 +1,6 @@
 # game.py
 # High-level game API: init_game(), tick_game(), render_game()
 
-import random
-
 import pygame as pg
 
 import settings as S
@@ -11,6 +9,7 @@ from commands import (
     cmd_spawn_bullet,
     cmd_spawn_player,
     enqueue,
+    enqueue_n,
     make_command_buffer,
 )
 from helpers import circles_overlap, clamp, random_vel
@@ -104,9 +103,5 @@ def _update_collisions(reg, state):
             state["hits"] += 1
 
             # destroy bullet and spawn a new one (deferred via commands)
-            enqueue(cmd_buf, cmd_destroy(b), S.BULLET_SPAWN_AT_HIT)
-
-            new_x = random.uniform(S.BULLET_RADIUS, S.SCREEN_W - S.BULLET_RADIUS)
-            new_y = random.uniform(S.BULLET_RADIUS, S.SCREEN_H - S.BULLET_RADIUS)
-            new_vel = random_vel(S.BULLET_SPEED_MIN, S.BULLET_SPEED_MAX)
-            enqueue(cmd_buf, cmd_spawn_bullet((new_x, new_y), new_vel))
+            enqueue(cmd_buf, cmd_destroy(b))
+            enqueue_n(cmd_buf, cmd_spawn_bullet, S.BULLET_SPAWN_AT_HIT)
