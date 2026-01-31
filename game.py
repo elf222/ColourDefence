@@ -102,6 +102,7 @@ def _update_collisions(reg, state):
         if circles_overlap(ppos, prad, bpos, brad):
             state["hits"] += 1
 
-            # destroy bullet and spawn a new one (deferred via commands)
+            reg["colour"][p] = reg["colour"][b]
+            # destroy bullet and spawn a new
             enqueue(cmd_buf, cmd_destroy(b))
             enqueue_n(cmd_buf, cmd_spawn_bullet, S.BULLET_SPAWN_AT_HIT)
