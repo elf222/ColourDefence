@@ -7,14 +7,16 @@ def make_registry():
         
         # When updating this update destroy_entity()
         # components: e -> data
-        "transform": {},   # e -> pygame.Vector2
+        "transform": {},   # e -> pygame.Vector2, position
         "velocity":  {},   # e -> pygame.Vector2
         "collider":  {},   # e -> float radius
         "colour":    {},
+        "shape":     {},
 
         # tags: sets of entities
         "player": set(),
         "bullet": set(),
+        "trail" : set(),
     }
 
 def create_entity(reg):
@@ -27,6 +29,8 @@ def destroy_entity(reg, e):
     reg["velocity"].pop(e, None)
     reg["collider"].pop(e, None)
     reg["colour"].pop(e, None)
+    reg["shape"].pop(e, None)
 
     reg["player"].discard(e)
     reg["bullet"].discard(e)
+    reg["trail"].discard(e)
