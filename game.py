@@ -12,9 +12,10 @@ from commands import (
     enqueue_n,
     make_command_buffer,
 )
-from helpers import circles_overlap, clamp
+from helpers import calculate_bullet_spawn_count, circles_overlap, clamp
 
 # ------------------ tick (input + logic) ------------------
+
 
 def tick_game(reg, state, dt):
     """Advance game logic by dt seconds.
@@ -26,6 +27,7 @@ def tick_game(reg, state, dt):
     _update_movement_and_bounds(reg, dt)
     _update_collisions(reg, state)
 
+
 def _input_player(reg, state):
     p = state.get("player_eid")
     if p is None or p not in reg["velocity"]:
@@ -34,15 +36,14 @@ def _input_player(reg, state):
     keys = pg.key.get_pressed()
     move = pg.Vector2(0, 0)
 
-    if keys[pg.K_w]: move.y -= 1
-    if keys[pg.K_s]: move.y += 1
-    if keys[pg.K_a]: move.x -= 1
-    if keys[pg.K_d]: move.x += 1
+    move.x += keys[pg.K_d] - keys[pg.K_a]
+    move.y += keys[pg.K_s] - keys[pg.K_w]
 
     if move.length_squared() > 0:
         move = move.normalize()
 
     reg["velocity"][p] = move * S.PLAYER_SPEED
+
 
 def _update_movement_and_bounds(reg, dt):
     # integrate entities that have velocity+transform
@@ -81,6 +82,7 @@ def _update_movement_and_bounds(reg, dt):
             reg["transform"][e] = pos
             reg["velocity"][e] = vel
 
+
 def _update_collisions(reg, state):
     p = state.get("player_eid")
     if p is None or p not in reg["transform"] or p not in reg["collider"]:
@@ -105,4 +107,8 @@ def _update_collisions(reg, state):
             reg["colour"][p] = reg["colour"][b]
             # destroy bullet and spawn a new
             enqueue(cmd_buf, cmd_destroy(b))
-            enqueue_n(cmd_buf, cmd_spawn_bullet, S.BULLET_SPAWN_AT_HIT)
+            enqueue_n(
+                cmd_buf,
+                cmd_spawn_bullet,
+                calculate_bullet_spawn_count(len(reg["bullet"])),
+            )
