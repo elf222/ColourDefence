@@ -1,10 +1,14 @@
 # commands.py
-# All entity creation/destruction goes through this command list.
-# Systems may enqueue commands; main applies them with process_commands().
+
+import copy
+import random
 
 import pygame as pg
+
 import settings as S
 from ecs import create_entity, destroy_entity
+from helpers import random_vel, random_edge_position
+
 
 def make_command_buffer():
     return []
@@ -12,22 +16,25 @@ def make_command_buffer():
 def enqueue(cmd_buf, cmd):
     cmd_buf.append(cmd)
 
+def enqueue_n (cmd_buf, factory, n=1):
+    cmd_buf.extend(factory() for _ in range(n))
+
 # --- command constructors (plain dicts) ---
 
-def cmd_spawn_player(pos, radius=S.PLAYER_RADIUS, store_as="player_eid"):
+def cmd_spawn_player(pos, store_as="player_eid"):
     return {
         "type": "spawn_player",
         "pos": pg.Vector2(pos),
-        "radius": float(radius),
-        "store_as": store_as,  # saves entity id into state[store_as]
+        "radius": float(S.PLAYER_RADIUS),
+        "store_as": store_as,
     }
 
-def cmd_spawn_bullet(pos, vel, radius=S.BULLET_RADIUS):
+def cmd_spawn_bullet():
     return {
         "type": "spawn_bullet",
-        "pos": pg.Vector2(pos),
-        "vel": pg.Vector2(vel),
-        "radius": float(radius),
+        "pos": random_edge_position(S.BULLET_RADIUS),
+        "vel": pg.Vector2(random_vel(S.BULLET_SPEED_MIN, S.BULLET_SPEED_MAX)),
+        "radius": float(S.BULLET_RADIUS),
     }
 
 def cmd_destroy(e):
