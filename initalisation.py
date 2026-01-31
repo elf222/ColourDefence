@@ -4,7 +4,6 @@ import settings as S
 from commands import (
     cmd_spawn_bullet,
     cmd_spawn_player,
-    enqueue,
     enqueue_n,
     make_command_buffer,
 )
@@ -24,7 +23,7 @@ def init_game():
         "color_pallete": make_up_colours(colour_pallete_size)
     }
 
-    enqueue(state["commands"], cmd_spawn_player((S.SCREEN_W * 0.5, S.SCREEN_H * 0.5)))
+    enqueue_n(state["commands"], cmd_spawn_player)
     enqueue_n(state["commands"], cmd_spawn_bullet, S.BULLET_START_COUNT)
 
     return reg, state

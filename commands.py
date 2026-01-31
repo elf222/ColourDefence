@@ -12,15 +12,15 @@ from helpers import aim_at, random_edge_position
 def make_command_buffer():
     return []
 
-def enqueue(cmd_buf, cmd):
+def enqueue(cmd_buf, cmd): #
     cmd_buf.append(cmd)
 
-def enqueue_n (cmd_buf, factory, n=1):
+def enqueue_n (cmd_buf, factory, n=1): # so far used for spawning in game-independent state
     cmd_buf.extend(factory() for _ in range(n))
 
 # --- command constructors (plain dicts) ---
 
-def cmd_spawn_player(pos, store_as="player_eid"):
+def cmd_spawn_player():
     return {
         "type": "spawn_player",
     }
