@@ -36,14 +36,8 @@ def _input_player(reg, state):
     keys = pg.key.get_pressed()
     move = pg.Vector2(0, 0)
 
-    if keys[pg.K_w]:
-        move.y -= 1
-    if keys[pg.K_s]:
-        move.y += 1
-    if keys[pg.K_a]:
-        move.x -= 1
-    if keys[pg.K_d]:
-        move.x += 1
+    move.x += keys[pg.K_d] - keys[pg.K_a]
+    move.y += keys[pg.K_s] - keys[pg.K_w]
 
     if move.length_squared() > 0:
         move = move.normalize()
