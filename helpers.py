@@ -44,6 +44,11 @@ def aim_at(origin, target):
     if direction.length_squared() == 0:
         return random_vel_norm()
     return direction.normalize()
+    
+def add_alpha(color, alpha):
+    if len(color) == 4:
+        return color[:3] + (alpha,)
+    return (*color, alpha)
 
 def rand_colour_vivid():
     r = int(100 + 155 * random.random())

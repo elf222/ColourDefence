@@ -4,7 +4,7 @@ import settings as S
 
 def init_app():
     pg.init()
-    pg.display.set_caption("pygame ECS: minimal main, commands for spawn/destroy")
+    pg.display.set_caption("Colour Defense - WIP name")
     screen = pg.display.set_mode((S.SCREEN_W, S.SCREEN_H))
     clock = pg.time.Clock()
     font = pg.font.Font(None, 24)

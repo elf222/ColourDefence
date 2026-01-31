@@ -17,6 +17,8 @@ async def main():
 
     running = True
     while running:
+        state["frame"]+= 1
+        
         if poll_quit():
             running = False
             continue

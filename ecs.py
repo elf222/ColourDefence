@@ -16,6 +16,7 @@ def make_registry():
         # tags: sets of entities
         "player": set(),
         "bullet": set(),
+        "trail" : set(),
     }
 
 def create_entity(reg):
@@ -32,3 +33,4 @@ def destroy_entity(reg, e):
 
     reg["player"].discard(e)
     reg["bullet"].discard(e)
+    reg["trail"].discard(e)
