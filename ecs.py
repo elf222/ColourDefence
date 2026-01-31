@@ -10,6 +10,7 @@ def make_registry():
         "transform": {},   # e -> pygame.Vector2
         "velocity":  {},   # e -> pygame.Vector2
         "collider":  {},   # e -> float radius
+        "colour":    {},
 
         # tags: sets of entities
         "player": set(),
@@ -25,6 +26,7 @@ def destroy_entity(reg, e):
     reg["transform"].pop(e, None)
     reg["velocity"].pop(e, None)
     reg["collider"].pop(e, None)
+    reg["colour"].pop(e, None)
 
     reg["player"].discard(e)
     reg["bullet"].discard(e)

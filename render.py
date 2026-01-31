@@ -9,7 +9,7 @@ def render(screen, reg, state, font):
         if e in reg["transform"] and e in reg["collider"]:
             pos = reg["transform"][e]
             rad = int(reg["collider"][e])
-            pg.draw.circle(screen, (235, 235, 235), (int(pos.x), int(pos.y)), rad)
+            pg.draw.circle(screen, state["color_pallete"][reg["colour"][e]], (int(pos.x), int(pos.y)), rad)
 
     # player
     p = state.get("player_eid")

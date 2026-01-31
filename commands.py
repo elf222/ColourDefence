@@ -6,7 +6,7 @@ import pygame as pg
 
 import settings as S
 from ecs import create_entity, destroy_entity
-from helpers import random_edge_position, aim_at
+from helpers import aim_at, random_edge_position
 
 
 def make_command_buffer():
@@ -32,18 +32,19 @@ def cmd_spawn_bullet():
     return {
         "type": "spawn_bullet",
     }
-    
+
 
 def bullet_spawning(reg, state):
     position = random_edge_position(S.BULLET_RADIUS)
     velocity = aim_at(position, reg["transform"][state["player_eid"]])*random.uniform(S.BULLET_SPEED_MIN, S.BULLET_SPEED_MAX)
-    
+
     e = create_entity(reg)
     reg["bullet"].add(e)
     reg["transform"][e] = position
     reg["velocity"][e]  = velocity
     reg["collider"][e]  = float(S.BULLET_RADIUS)
-        
+    reg["colour"][e]    = random.randint(0, state["pallete_size"]-1)
+
 
 def cmd_destroy(e):
     return {"type": "destroy", "e": int(e)}
