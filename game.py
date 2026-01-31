@@ -12,7 +12,7 @@ from commands import (
     enqueue_n,
     make_command_buffer,
 )
-from helpers import circles_overlap, clamp, random_vel
+from helpers import circles_overlap, clamp
 
 # ------------------ tick (input + logic) ------------------
 

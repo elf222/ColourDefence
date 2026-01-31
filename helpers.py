@@ -7,11 +7,8 @@ import settings as S
 def clamp(x, a, b):
     return a if x < a else b if x > b else x
 
-def random_vel(min_abs, max_abs):
-    # random direction + random speed
-    speed = random.uniform(min_abs, max_abs)
-    angle = random.uniform(0.0, math.tau)
-    return pg.Vector2(math.cos(angle), math.sin(angle)) * speed
+def random_vel_norm():
+    return pg.Vector2(1, 0).rotate(random.uniform(0, 360))
 
 def circles_overlap(p1, r1, p2, r2):
     d = p1 - p2
@@ -41,3 +38,9 @@ def random_edge_position(radius):
             S.SCREEN_W - radius,
             random.uniform(radius, S.SCREEN_H - radius)
         )
+
+def aim_at(origin, target):
+    direction = pg.Vector2(target) - pg.Vector2(origin)
+    if direction.length_squared() == 0:
+        return random_vel_norm()
+    return direction.normalize()

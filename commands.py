@@ -1,13 +1,12 @@
 # commands.py
 
-import copy
 import random
 
 import pygame as pg
 
 import settings as S
 from ecs import create_entity, destroy_entity
-from helpers import random_vel, random_edge_position
+from helpers import random_edge_position, aim_at
 
 
 def make_command_buffer():
@@ -32,19 +31,26 @@ def cmd_spawn_player(pos, store_as="player_eid"):
 def cmd_spawn_bullet():
     return {
         "type": "spawn_bullet",
-        "pos": random_edge_position(S.BULLET_RADIUS),
-        "vel": pg.Vector2(random_vel(S.BULLET_SPEED_MIN, S.BULLET_SPEED_MAX)),
-        "radius": float(S.BULLET_RADIUS),
     }
+    
+
+def bullet_spawning(reg, state):
+    position = random_edge_position(S.BULLET_RADIUS)
+    velocity = aim_at(position, reg["transform"][state["player_eid"]])*random.uniform(S.BULLET_SPEED_MIN, S.BULLET_SPEED_MAX)
+    
+    e = create_entity(reg)
+    reg["bullet"].add(e)
+    reg["transform"][e] = position
+    reg["velocity"][e]  = velocity
+    reg["collider"][e]  = float(S.BULLET_RADIUS)
+        
 
 def cmd_destroy(e):
     return {"type": "destroy", "e": int(e)}
 
 def process_commands(reg, state):
-    """Apply and clear pending commands.
-
-    IMPORTANT: This is the only place that creates/destroys entities.
-    It should be called AFTER tick_game() so systems can safely enqueue while iterating.
+    """
+    Apply and clear pending commands.
     """
     cmd_buf = state["commands"]
     if not cmd_buf:
@@ -65,11 +71,7 @@ def process_commands(reg, state):
                 state[store_as] = e
 
         elif t == "spawn_bullet":
-            e = create_entity(reg)
-            reg["bullet"].add(e)
-            reg["transform"][e] = pg.Vector2(c["pos"])
-            reg["velocity"][e]  = pg.Vector2(c["vel"])
-            reg["collider"][e]  = float(c["radius"])
+            bullet_spawning(reg, state)
 
         elif t == "destroy":
             destroy_entity(reg, c["e"])
