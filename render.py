@@ -56,5 +56,5 @@ def render(screen, reg, state, font):
     #    state["cumulative_static_surface"].blit(overlay, (0, 0))
     state["new_tick_static_surface"].fill((0, 0, 0, 0))
 
-    txt = font.render(f"Hits: {state['hits']}", True, (0, 255, 0))
+    txt = font.render(f"Hits: {state['hits']}, Mana: {state['mana']}", True, (0, 255, 0))
     screen.blit(txt, (12, 10))

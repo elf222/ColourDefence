@@ -112,3 +112,4 @@ def _update_collisions(reg, state):
                 cmd_spawn_bullet,
                 calculate_bullet_spawn_count(len(reg["bullet"])),
             )
+            state["mana"]+= S.MANA_PER_HIT

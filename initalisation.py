@@ -20,6 +20,8 @@ def init_game():
         "frame": 0,
         
         "hits": 0,
+        "mana": 0,
+        
         "commands": make_command_buffer(),  # pending commands applied by main
         "player_eid": None,                 # will be set by spawn_player command
 
