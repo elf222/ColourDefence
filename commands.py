@@ -23,9 +23,6 @@ def enqueue_n (cmd_buf, factory, n=1):
 def cmd_spawn_player(pos, store_as="player_eid"):
     return {
         "type": "spawn_player",
-        "pos": pg.Vector2(pos),
-        "radius": float(S.PLAYER_RADIUS),
-        "store_as": store_as,
     }
 
 def cmd_spawn_bullet():
@@ -33,6 +30,16 @@ def cmd_spawn_bullet():
         "type": "spawn_bullet",
     }
 
+
+def player_spawning(reg, state):
+    e = create_entity(reg)
+    reg["player"].add(e)
+    reg["transform"][e] = pg.Vector2((S.SCREEN_W * 0.5, S.SCREEN_H * 0.5))
+    reg["velocity"][e]  = pg.Vector2(0, 0)
+    reg["collider"][e]  = float(S.PLAYER_RADIUS)
+    reg["colour"][e]    = random.randint(0, state["pallete_size"]-1)
+
+    state["player_eid"] = e
 
 def bullet_spawning(reg, state):
     position = random_edge_position(S.BULLET_RADIUS)
@@ -61,15 +68,7 @@ def process_commands(reg, state):
         t = c.get("type")
 
         if t == "spawn_player":
-            e = create_entity(reg)
-            reg["player"].add(e)
-            reg["transform"][e] = pg.Vector2(c["pos"])
-            reg["velocity"][e]  = pg.Vector2(0, 0)
-            reg["collider"][e]  = float(c["radius"])
-
-            store_as = c.get("store_as")
-            if store_as:
-                state[store_as] = e
+            player_spawning(reg, state)
 
         elif t == "spawn_bullet":
             bullet_spawning(reg, state)
