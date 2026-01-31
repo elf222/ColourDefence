@@ -17,6 +17,8 @@ def render(screen, reg, state, font):
         pos = reg["transform"][p]
         rad = int(reg["collider"][p])
         pg.draw.circle(screen, state["color_pallete"][reg["colour"][p]], (int(pos.x), int(pos.y)), rad)
+    
+    
 
     txt = font.render(f"Hits: {state['hits']}", True, (0, 255, 0))
     screen.blit(txt, (12, 10))

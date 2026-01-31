@@ -38,6 +38,7 @@ def player_spawning(reg, state):
     reg["velocity"][e]  = pg.Vector2(0, 0)
     reg["collider"][e]  = float(S.PLAYER_RADIUS)
     reg["colour"][e]    = random.randint(0, state["pallete_size"]-1)
+    reg["shape"][e]     = S.SHAPE_PLAYER
 
     state["player_eid"] = e
 
@@ -51,6 +52,7 @@ def bullet_spawning(reg, state):
     reg["velocity"][e]  = velocity
     reg["collider"][e]  = float(S.BULLET_RADIUS)
     reg["colour"][e]    = random.randint(0, state["pallete_size"]-1)
+    reg["shape"][e]     = S.SHAPE_BULLET
 
 
 def cmd_destroy(e):
