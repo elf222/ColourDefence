@@ -60,6 +60,7 @@ def bullet_spawning(reg, state):
     reg["colour"][e]    = random.randint(0, state["pallete_size"]-1)
     reg["shape"][e]     = S.SHAPE_BULLET
 
+"""
 def trail_spawning(reg, state, parent_e):
     e = create_entity(reg)
     reg["bullet"].add(e)
@@ -68,7 +69,7 @@ def trail_spawning(reg, state, parent_e):
     reg["collider"][e]  = float(S.BULLET_RADIUS)
     reg["colour"][e]    = random.randint(0, state["pallete_size"]-1)
     reg["shape"][e]     = S.SHAPE_BULLET
-
+"""
 
 def mask_spawning(reg, state, mask_type):
     e = create_entity(reg)
