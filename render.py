@@ -64,7 +64,7 @@ def render(screen, reg, state, font):
     
 
     state["cumulative_static_surface"].blit(state["new_tick_static_surface"], (0, 0))
-    if(state["frame"]%10 == 0) and state["game_state"] != "pause":
+    if(state["frame"]%15 == 0) and state["game_state"] != "pause":
         state["cumulative_static_surface"].blit(overlay, (0, 0))
     state["new_tick_static_surface"].fill((0, 0, 0, 0))
 
