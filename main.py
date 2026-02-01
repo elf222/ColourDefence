@@ -8,12 +8,14 @@ from commands import process_commands
 from game import tick_game
 from initalisation import init_game
 from render import render
+# import FPS_track
 
 async def main():
     screen, clock, font = init_app()
     reg, state = init_game()
 
     process_commands(reg, state)
+    # fps = FPS_track.FPSTracker()
 
     running = True
     while running:
@@ -23,12 +25,14 @@ async def main():
             running = False
             continue
 
-        dt = clock.tick(S.TARGET_FPS) / 1000.0
+        dt = clock.tick(S.TARGET_FPS) / 1000.0 #fps.tick(S.TARGET_FPS) # 
 
         tick_game(reg, state, dt)
         process_commands(reg, state)
         render(screen, reg, state, font)
 
+        # fps.draw(screen)
+        
         pg.display.flip()
 
         await asyncio.sleep(0)

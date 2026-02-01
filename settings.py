@@ -2,6 +2,8 @@
 SCREEN_W, SCREEN_H = 900, 520
 TARGET_FPS = 120
 
+ANIMATION_FPS = 4
+
 COLOUR_BACKGROUND = (0, 0, 0)
 
 PLAYER_RADIUS = 14
@@ -16,6 +18,8 @@ BULLET_RADIUS = 6
 BULLET_SPEED_MIN = 100.0
 BULLET_SPEED_MAX = 400.0
 
+MANA_PER_HIT = 10
+
 COLOUR_VARIETY_MIN = 2
 COLOUR_VARIETY_MAX = 16
 
@@ -27,3 +31,16 @@ BASE_BULLET_SPAWN = 2
 SPAWN_DECAY_FACTOR = 0.02
 MIN_SPAWN_COUNT = 1
 MAX_SPAWN_COUNT = 4
+
+MASKS = {
+    "1" : {
+        "name" : "shield",
+        "cost" : 100,
+        "active_phase_duration": 5
+    },
+    "2" : {
+        "name" : "hat_propeller",
+        "cost" : 100,
+        "active_phase_duration": 15
+    },
+}

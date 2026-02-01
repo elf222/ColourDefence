@@ -5,8 +5,9 @@ import random
 import pygame as pg
 
 import settings as S
+import texture_settings
 from ecs import create_entity, destroy_entity
-from helpers import aim_at, random_edge_position
+from helpers import aim_at, entity_exists, random_edge_position
 
 
 def make_command_buffer():
@@ -28,6 +29,11 @@ def cmd_spawn_player():
 def cmd_spawn_bullet():
     return {
         "type": "spawn_bullet",
+    }
+
+def cmd_spawn_masks():
+    return {
+        "type"     : "spawn_mask",
     }
 
 
@@ -53,7 +59,7 @@ def bullet_spawning(reg, state):
     reg["collider"][e]  = float(S.BULLET_RADIUS)
     reg["colour"][e]    = random.randint(0, state["pallete_size"]-1)
     reg["shape"][e]     = S.SHAPE_BULLET
-    
+
 def trail_spawning(reg, state, parent_e):
     e = create_entity(reg)
     reg["bullet"].add(e)
@@ -62,6 +68,23 @@ def trail_spawning(reg, state, parent_e):
     reg["collider"][e]  = float(S.BULLET_RADIUS)
     reg["colour"][e]    = random.randint(0, state["pallete_size"]-1)
     reg["shape"][e]     = S.SHAPE_BULLET
+
+
+def mask_spawning(reg, state, mask_type):
+    e = create_entity(reg)
+    reg["mask"].add(e)
+    reg["transform"][e] = reg["transform"][state["player_eid"]]
+    reg["mask_type"][e] = mask_type
+    reg["phase"][e] = "active"
+    reg["phase_end"][e] = state["frame"] + int(S.MASKS[mask_type]["active_phase_duration"]*S.TARGET_FPS)
+    reg["texture_name"][e] = "mask_" + S.MASKS[mask_type]["name"]
+    reg["current_texture"][e] = 0
+    reg["ofset"][e] = pg.math.Vector2(texture_settings.game[reg["texture_name"][e]]["ofsetX"], texture_settings.game[reg["texture_name"][e]]["ofsetY"]) + pg.math.Vector2(texture_settings.game[reg["texture_name"][e]]["W"], texture_settings.game[reg["texture_name"][e]]["H"])/2
+def masks_spawning(reg, state):
+    for mask in state["mask_engagement"]:
+        if state["mask_engagement"][mask] and not entity_exists(reg, state, "mask_type", mask):
+            mask_spawning(reg, state, mask)
+
 
 def cmd_destroy(e):
     return {"type": "destroy", "e": int(e)}
@@ -82,6 +105,9 @@ def process_commands(reg, state):
 
         elif t == "spawn_bullet":
             bullet_spawning(reg, state)
+
+        elif t == "spawn_mask":
+            masks_spawning(reg, state)
 
         elif t == "destroy":
             destroy_entity(reg, c["e"])
