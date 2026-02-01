@@ -2,6 +2,8 @@
 SCREEN_W, SCREEN_H = 900, 520
 TARGET_FPS = 120
 
+ANIMATION_FPS = 4
+
 COLOUR_BACKGROUND = (0, 0, 0)
 
 PLAYER_RADIUS = 14
@@ -34,20 +36,10 @@ MASKS = {
     "1" : {
         "name" : "shield",
         "cost" : 100,
-        "active_phase_duration": 1
+        "active_phase_duration": 5
     },
     "2" : {
-        "name" : "2",
-        "cost" : 100,
-        "active_phase_duration": 15
-    },
-    "3" : {
-        "name" : "3",
-        "cost" : 100,
-        "active_phase_duration": 15
-    },
-    "4" : {
-        "name" : "4",
+        "name" : "hat_propeller",
         "cost" : 100,
         "active_phase_duration": 15
     },

@@ -25,8 +25,10 @@ def tick_game(reg, state, dt):
     """
     _input_player(reg, state)
     _update_movement_and_bounds(reg, dt)
+    _update_attached_objects(reg, state, dt)
     _update_collisions(reg, state)
     _input_masks(reg, state)
+    _manage_masks(reg, state)
 
 
 def _input_player(reg, state):
@@ -98,7 +100,12 @@ def _update_movement_and_bounds(reg, dt):
 
             reg["transform"][e] = pos
             reg["velocity"][e] = vel
+            
 
+def _update_attached_objects(reg, state, dt):
+    for mask in reg["mask"]:
+        if state["mask_engagement"][reg["mask_type"][mask]]:
+            reg["transform"][mask] = reg["transform"][state["player_eid"]]
 
 
 def _update_collisions(reg, state):
@@ -132,9 +139,13 @@ def _update_collisions(reg, state):
             )
             state["mana"]+= S.MANA_PER_HIT
 
-def _track_masks(reg, state):
+def _manage_masks(reg, state):
     cmd_buf = state["commands"]
     
     for mask in reg["mask"]:
-        if state["frame"] >= mask:
-            enqueue(cmd_buf, cmd_destroy(b))
+        if state["frame"] >= reg["phase_end"][mask]:
+            enqueue(cmd_buf, cmd_destroy(mask))
+            state["mask_engagement"][reg["mask_type"][mask]] = False
+            
+    
+    

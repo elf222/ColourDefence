@@ -2,6 +2,8 @@ import pygame as pg
 
 import settings as S
 from helpers import add_alpha
+from atlas import frame_at, frame_with_alpha
+import texture_settings
 
 overlay = pg.Surface((S.SCREEN_W, S.SCREEN_W), pg.SRCALPHA)
 overlay.fill(add_alpha(S.COLOUR_BACKGROUND, 2))
@@ -24,6 +26,11 @@ def outlined_circle(
         radius,
 )
 
+def render_masks(screen, reg, state):
+    frame = state["frame"] * S.ANIMATION_FPS // (S.TARGET_FPS) 
+    for mask in reg["mask"]:
+        screen.blit(frame_with_alpha(state["game_atlases"][reg["texture_name"][mask]]["frames"].frames, int(frame), texture_settings.game[reg["texture_name"][mask]]["alpha"]),
+            (reg["transform"][state["player_eid"]]) - reg["ofset"][mask]) 
 
 def render(screen, reg, state, font):
     screen.fill(S.COLOUR_BACKGROUND)
@@ -49,7 +56,9 @@ def render(screen, reg, state, font):
             add_alpha(state["color_pallete"][reg["colour"][p]], S.TRAIL_ALPHA),
             (int(pos.x), int(pos.y)),
             rad)
-
+    
+    render_masks(screen, reg, state)
+    
 
     state["cumulative_static_surface"].blit(state["new_tick_static_surface"], (0, 0))
     # if(state["frame"]%20 == 0):

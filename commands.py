@@ -5,6 +5,7 @@ import random
 import pygame as pg
 
 import settings as S
+import texture_settings
 from ecs import create_entity, destroy_entity
 from helpers import aim_at, entity_exists, random_edge_position
 
@@ -75,7 +76,10 @@ def mask_spawning(reg, state, mask_type):
     reg["transform"][e] = reg["transform"][state["player_eid"]]
     reg["mask_type"][e] = mask_type
     reg["phase"][e] = "active"
-    reg["phase_end"] = state["frame"] + int(S.MASKS[mask_type]["active_phase_duration"]*S.TARGET_FPS)
+    reg["phase_end"][e] = state["frame"] + int(S.MASKS[mask_type]["active_phase_duration"]*S.TARGET_FPS)
+    reg["texture_name"][e] = "mask_" + S.MASKS[mask_type]["name"]
+    reg["current_texture"][e] = 0
+    reg["ofset"][e] = pg.math.Vector2(texture_settings.game[reg["texture_name"][e]]["ofsetX"], texture_settings.game[reg["texture_name"][e]]["ofsetY"]) + pg.math.Vector2(texture_settings.game[reg["texture_name"][e]]["W"], texture_settings.game[reg["texture_name"][e]]["H"])/2
 def masks_spawning(reg, state):
     for mask in state["mask_engagement"]:
         if state["mask_engagement"][mask] and not entity_exists(reg, state, "mask_type", mask):

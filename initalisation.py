@@ -3,6 +3,7 @@ import random
 import pygame as pg
 
 import settings as S
+import texture_settings
 from commands import (
     cmd_spawn_bullet,
     cmd_spawn_player,
@@ -11,6 +12,8 @@ from commands import (
 )
 from ecs import make_registry
 from helpers import make_up_colours
+
+from atlas import load_game_atlas
 
 
 def init_game():
@@ -35,6 +38,11 @@ def init_game():
         # surfaces to cull static objects to
         "cumulative_static_surface": pg.Surface((S.SCREEN_W, S.SCREEN_W), pg.SRCALPHA).convert_alpha(),
         "new_tick_static_surface": pg.Surface((S.SCREEN_W, S.SCREEN_W), pg.SRCALPHA).convert_alpha(),
+        
+        "game_atlases" : {
+            name: load_game_atlas(name, cfg, texture_settings.texture_folder) # "frames", "length"
+            for name, cfg in texture_settings.game.items()
+        }
     }
 
     enqueue_n(state["commands"], cmd_spawn_player)
