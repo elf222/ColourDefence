@@ -4,17 +4,18 @@
 import pygame as pg
 
 import settings as S
+import keymap as K
 from commands import (
     cmd_destroy,
     cmd_spawn_bullet,
-    cmd_spawn_player,
+    cmd_spawn_masks,
     enqueue,
     enqueue_n,
-    make_command_buffer,
 )
-from helpers import circles_overlap, clamp
+from helpers import calculate_bullet_spawn_count, circles_overlap, clamp
 
 # ------------------ tick (input + logic) ------------------
+
 
 def tick_game(reg, state, dt):
     """Advance game logic by dt seconds.
@@ -24,7 +25,11 @@ def tick_game(reg, state, dt):
     """
     _input_player(reg, state)
     _update_movement_and_bounds(reg, dt)
+    _update_attached_objects(reg, state, dt)
     _update_collisions(reg, state)
+    _input_masks(reg, state)
+    _manage_masks(reg, state)
+
 
 def _input_player(reg, state):
     p = state.get("player_eid")
@@ -34,15 +39,30 @@ def _input_player(reg, state):
     keys = pg.key.get_pressed()
     move = pg.Vector2(0, 0)
 
-    if keys[pg.K_w]: move.y -= 1
-    if keys[pg.K_s]: move.y += 1
-    if keys[pg.K_a]: move.x -= 1
-    if keys[pg.K_d]: move.x += 1
+    move.x += keys[K.RIGHT] - keys[K.LEFT]
+    move.y += keys[K.DOWN] - keys[K.UP]
 
     if move.length_squared() > 0:
         move = move.normalize()
 
     reg["velocity"][p] = move * S.PLAYER_SPEED
+
+
+def _input_masks(reg, state): # spawn mask only if they do not exist, stacking is allowed
+    keys = pg.key.get_pressed()
+    nothing_new = True
+   
+    for key, mask in K.KEY_TO_MASK.items():
+        if keys[key] and (not state["mask_engagement"][mask]) and state["mana"] >= S.MASKS[mask]["cost"]:
+            state["mask_engagement"][mask] = True
+            state["mana"] -= S.MASKS[mask]["cost"]
+            nothing_new = False
+            
+    if nothing_new:
+        return
+
+    enqueue_n(state["commands"], cmd_spawn_masks)
+
 
 def _update_movement_and_bounds(reg, dt):
     # integrate entities that have velocity+transform
@@ -80,6 +100,13 @@ def _update_movement_and_bounds(reg, dt):
 
             reg["transform"][e] = pos
             reg["velocity"][e] = vel
+            
+
+def _update_attached_objects(reg, state, dt):
+    for mask in reg["mask"]:
+        if state["mask_engagement"][reg["mask_type"][mask]]:
+            reg["transform"][mask] = reg["transform"][state["player_eid"]]
+
 
 def _update_collisions(reg, state):
     p = state.get("player_eid")
@@ -105,4 +132,20 @@ def _update_collisions(reg, state):
             reg["colour"][p] = reg["colour"][b]
             # destroy bullet and spawn a new
             enqueue(cmd_buf, cmd_destroy(b))
-            enqueue_n(cmd_buf, cmd_spawn_bullet, S.BULLET_SPAWN_AT_HIT)
+            enqueue_n(
+                cmd_buf,
+                cmd_spawn_bullet,
+                calculate_bullet_spawn_count(len(reg["bullet"])),
+            )
+            state["mana"]+= S.MANA_PER_HIT
+
+def _manage_masks(reg, state):
+    cmd_buf = state["commands"]
+    
+    for mask in reg["mask"]:
+        if state["frame"] >= reg["phase_end"][mask]:
+            enqueue(cmd_buf, cmd_destroy(mask))
+            state["mask_engagement"][reg["mask_type"][mask]] = False
+            
+    
+    
