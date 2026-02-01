@@ -4,13 +4,13 @@
 import pygame as pg
 
 import settings as S
+import keymap as K
 from commands import (
     cmd_destroy,
     cmd_spawn_bullet,
-    cmd_spawn_player,
+    cmd_spawn_masks,
     enqueue,
     enqueue_n,
-    make_command_buffer,
 )
 from helpers import calculate_bullet_spawn_count, circles_overlap, clamp
 
@@ -26,6 +26,7 @@ def tick_game(reg, state, dt):
     _input_player(reg, state)
     _update_movement_and_bounds(reg, dt)
     _update_collisions(reg, state)
+    _input_masks(reg, state)
 
 
 def _input_player(reg, state):
@@ -36,13 +37,29 @@ def _input_player(reg, state):
     keys = pg.key.get_pressed()
     move = pg.Vector2(0, 0)
 
-    move.x += keys[pg.K_d] - keys[pg.K_a]
-    move.y += keys[pg.K_s] - keys[pg.K_w]
+    move.x += keys[K.RIGHT] - keys[K.LEFT]
+    move.y += keys[K.DOWN] - keys[K.UP]
 
     if move.length_squared() > 0:
         move = move.normalize()
 
     reg["velocity"][p] = move * S.PLAYER_SPEED
+
+
+def _input_masks(reg, state): # spawn mask only if they do not exist, stacking is allowed
+    keys = pg.key.get_pressed()
+    nothing_new = True
+   
+    for key, mask in K.KEY_TO_MASK.items():
+        if keys[key] and (not state["mask_engagement"][mask]) and state["mana"] >= S.MASKS[mask]["cost"]:
+            state["mask_engagement"][mask] = True
+            state["mana"] -= S.MASKS[mask]["cost"]
+            nothing_new = False
+            
+    if nothing_new:
+        return
+
+    enqueue_n(state["commands"], cmd_spawn_masks)
 
 
 def _update_movement_and_bounds(reg, dt):
@@ -83,6 +100,7 @@ def _update_movement_and_bounds(reg, dt):
             reg["velocity"][e] = vel
 
 
+
 def _update_collisions(reg, state):
     p = state.get("player_eid")
     if p is None or p not in reg["transform"] or p not in reg["collider"]:
@@ -113,3 +131,10 @@ def _update_collisions(reg, state):
                 calculate_bullet_spawn_count(len(reg["bullet"])),
             )
             state["mana"]+= S.MANA_PER_HIT
+
+def _track_masks(reg, state):
+    cmd_buf = state["commands"]
+    
+    for mask in reg["mask"]:
+        if state["frame"] >= mask:
+            enqueue(cmd_buf, cmd_destroy(b))

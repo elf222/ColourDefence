@@ -24,6 +24,10 @@ def init_game():
         
         "commands": make_command_buffer(),  # pending commands applied by main
         "player_eid": None,                 # will be set by spawn_player command
+        
+        "mask_engagement": {
+            mask : False for mask in S.MASKS
+        },
 
         "pallete_size": colour_pallete_size,
         "color_pallete": make_up_colours(colour_pallete_size),

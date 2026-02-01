@@ -70,3 +70,10 @@ def calculate_bullet_spawn_count(current_bullet_count) -> int:
     # More bullets in game = fewer new bullets per hit
     spawn_count = S.BASE_BULLET_SPAWN - (current_bullet_count * S.SPAWN_DECAY_FACTOR)
     return max(S.MIN_SPAWN_COUNT, min(S.MAX_SPAWN_COUNT, round(spawn_count)))
+
+def entity_exists(reg, state, component, property):
+    for e in reg[component]:
+        if reg[component][e] == property:
+            return True
+            
+    return False
