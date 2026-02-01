@@ -8,11 +8,13 @@ from commands import process_commands
 from game import tick_game
 from initalisation import init_game
 from render import render
+from state_handling import state_key_processing
 # import FPS_track
 
 async def main():
     screen, clock, font = init_app()
     reg, state = init_game()
+    state["game_state"] = "active"
 
     process_commands(reg, state)
     # fps = FPS_track.FPSTracker()
@@ -27,7 +29,9 @@ async def main():
 
         dt = clock.tick(S.TARGET_FPS) / 1000.0 #fps.tick(S.TARGET_FPS) # 
 
-        tick_game(reg, state, dt)
+        state_key_processing(reg, state)
+        if state["game_state"] != "pause":
+            tick_game(reg, state, dt)
         process_commands(reg, state)
         render(screen, reg, state, font)
 

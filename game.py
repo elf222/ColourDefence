@@ -13,6 +13,7 @@ from commands import (
     enqueue_n,
 )
 from helpers import calculate_bullet_spawn_count, circles_overlap, clamp
+from mask_bahaviour import masked_player_hitbox
 
 # ------------------ tick (input + logic) ------------------
 
@@ -44,6 +45,8 @@ def _input_player(reg, state):
 
     if move.length_squared() > 0:
         move = move.normalize()
+    if state["game_state"] != "active":
+        move = pg.Vector2(0, 0)
 
     reg["velocity"][p] = move * S.PLAYER_SPEED
 
@@ -110,34 +113,32 @@ def _update_attached_objects(reg, state, dt):
 
 def _update_collisions(reg, state):
     p = state.get("player_eid")
-    if p is None or p not in reg["transform"] or p not in reg["collider"]:
-        return
 
-    ppos = reg["transform"][p]
-    prad = reg["collider"][p]
+    ppos, prad = masked_player_hitbox(reg, state)
 
     cmd_buf = state["commands"]
 
     # iterate bullets without mutating sets/dicts; enqueue destroy/spawn instead
-    for b in list(reg["bullet"]):
-        if b not in reg["transform"] or b not in reg["collider"]:
-            continue
-
-        bpos = reg["transform"][b]
-        brad = reg["collider"][b]
-
-        if circles_overlap(ppos, prad, bpos, brad):
-            state["hits"] += 1
-
-            reg["colour"][p] = reg["colour"][b]
-            # destroy bullet and spawn a new
-            enqueue(cmd_buf, cmd_destroy(b))
-            enqueue_n(
-                cmd_buf,
-                cmd_spawn_bullet,
-                calculate_bullet_spawn_count(len(reg["bullet"])),
-            )
-            state["mana"]+= S.MANA_PER_HIT
+    if state["game_state"] != "death":
+        for b in list(reg["bullet"]):
+            if b not in reg["transform"] or b not in reg["collider"]:
+                continue
+    
+            bpos = reg["transform"][b]
+            brad = reg["collider"][b]
+    
+            if circles_overlap(ppos, prad, bpos, brad):
+                state["hits"] += 1
+    
+                reg["colour"][p] = reg["colour"][b]
+                # destroy bullet and spawn a new
+                enqueue(cmd_buf, cmd_destroy(b))
+                enqueue_n(
+                    cmd_buf,
+                    cmd_spawn_bullet,
+                    calculate_bullet_spawn_count(len(reg["bullet"])),
+                )
+                state["mana"]+= S.MANA_PER_HIT
 
 def _manage_masks(reg, state):
     cmd_buf = state["commands"]

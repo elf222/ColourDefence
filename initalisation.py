@@ -20,6 +20,7 @@ def init_game():
     reg = make_registry()
     colour_pallete_size = random.randint(S.COLOUR_VARIETY_MIN, S.COLOUR_VARIETY_MAX)
     state = {
+        "game_state": "pause",
         "frame": 0,
         
         "hits": 0,

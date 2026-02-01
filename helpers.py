@@ -68,8 +68,11 @@ def make_up_colours(n=10):
 def calculate_bullet_spawn_count(current_bullet_count) -> int:
     """Calculate dynamic bullet spawn count based on current game state"""
     # More bullets in game = fewer new bullets per hit
-    spawn_count = S.BASE_BULLET_SPAWN - (current_bullet_count * S.SPAWN_DECAY_FACTOR)
-    return max(S.MIN_SPAWN_COUNT, min(S.MAX_SPAWN_COUNT, round(spawn_count)))
+    if current_bullet_count < S.BULLET_CRITICAL_MASS:
+        return S.BULLET_SPAWN_AT_HIT
+    if current_bullet_count <S.BULLET_MAX_MASS:
+        return S.BULLET_SPAWN_AT_HIT*3
+    return 1
 
 def entity_exists(reg, state, component, property):
     for e in reg[component]:
