@@ -9,15 +9,15 @@ from game import tick_game
 from initalisation import init_game
 from render import render
 from state_handling import state_key_processing
-# import FPS_track
+import FPS_track
 
 async def main():
     screen, clock, font = init_app()
     reg, state = init_game()
     state["game_state"] = "active"
 
-    process_commands(reg, state)
-    # fps = FPS_track.FPSTracker()
+    # process_commands(reg, state)
+    fps = FPS_track.FPSTracker()
 
     running = True
     while running:
@@ -27,15 +27,16 @@ async def main():
             running = False
             continue
 
-        dt = clock.tick(S.TARGET_FPS) / 1000.0 #fps.tick(S.TARGET_FPS) # 
+        # dt = clock.tick(S.TARGET_FPS) / 1000.0 
+        dt = fps.tick(S.TARGET_FPS)
 
         state_key_processing(reg, state)
+        process_commands(reg, state)
         if state["game_state"] != "pause":
             tick_game(reg, state, dt)
-        process_commands(reg, state)
         render(screen, reg, state, font)
 
-        # fps.draw(screen)
+        fps.draw(screen)
         
         pg.display.flip()
 

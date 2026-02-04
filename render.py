@@ -29,7 +29,8 @@ def outlined_circle(
 def render_masks(screen, reg, state):
     frame = state["frame"] * S.ANIMATION_FPS // (S.TARGET_FPS) 
     for mask in reg["mask"]:
-        screen.blit(frame_with_alpha(state["game_atlases"][reg["texture_name"][mask]]["frames"].frames, int(frame), texture_settings.game[reg["texture_name"][mask]]["alpha"]),
+        screen.blit(frame_with_alpha(state["game_atlases"][reg["texture_name"][mask]]["frames"].frames, int(frame),
+            texture_settings.game[reg["texture_name"][mask]]["alpha"]),
             (reg["transform"][state["player_eid"]]) - reg["ofset"][mask]) 
 
 def render(screen, reg, state, font):
@@ -44,7 +45,7 @@ def render(screen, reg, state, font):
                 outlined_circle(screen, state["color_pallete"][reg["colour"][e]], (int(pos.x), int(pos.y)), rad)
                 if state["game_state"] == "active":
                     pg.draw.circle(state["new_tick_static_surface"],
-                        add_alpha(state["color_pallete"][reg["colour"][e]], S.TRAIL_ALPHA),
+                        add_alpha(state["color_pallete"][reg["colour"][e]], S.TRAIL_ALPHA_BULLET),
                         (int(pos.x), int(pos.y)),
                         rad)
 
@@ -56,7 +57,7 @@ def render(screen, reg, state, font):
         outlined_circle(screen, state["color_pallete"][reg["colour"][p]], (int(pos.x), int(pos.y)), rad)
         if reg["velocity"][p]:
             pg.draw.circle(state["new_tick_static_surface"],
-                add_alpha(state["color_pallete"][reg["colour"][p]], S.TRAIL_ALPHA*2),
+                add_alpha(state["color_pallete"][reg["colour"][p]], S.TRAIL_ALPHA_PLAYER),
                 (int(pos.x), int(pos.y)),
                 rad)
     
@@ -64,12 +65,13 @@ def render(screen, reg, state, font):
     
 
     state["cumulative_static_surface"].blit(state["new_tick_static_surface"], (0, 0))
-    if(state["frame"]%15 == 0) and state["game_state"] != "pause":
+    if(state["frame"]%S.FRAMES_PER_DARKENING == 0) and state["game_state"] != "pause":
         state["cumulative_static_surface"].blit(overlay, (0, 0))
     state["new_tick_static_surface"].fill((0, 0, 0, 0))
-
-    txt = font.render(f"Hits: {state['hits']}, Mana: {state['mana']}", True, (0, 255, 0))
-    screen.blit(txt, (12, 10))
+    
+    if state["game_state"] == "active":
+        txt = font.render(f"Hits: {state['hits']}, Mana: {state['mana']}", True, (0, 255, 0))
+        screen.blit(txt, (12, 10))
     
     if state["game_state"] == "death":
         screen.blit(frame_with_alpha(state["game_atlases"]["screen_death"]["frames"].frames, 0, 255), (0, 0))
