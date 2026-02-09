@@ -1,8 +1,3 @@
-import sys
-print("PYTHON:", sys.executable)
-print("VERSION:", sys.version)
-print("PATH0:", sys.path[0])
-"""
 import asyncio
 
 import pygame as pg
@@ -52,4 +47,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-"""
