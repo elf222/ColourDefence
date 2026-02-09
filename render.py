@@ -41,9 +41,9 @@ def render(screen, reg, state, font):
     # bullets
     if state["game_state"] != "pause":
         for e in reg["tag"]["bullet"]:
-            if e in reg["component"]["position"] and e in reg["component"]["collider"]:
+            if e in reg["component"]["position"] and e in reg["component"]["size"]:
                 pos = reg["component"]["position"][e]
-                rad = int(reg["component"]["collider"][e])
+                rad = int(reg["component"]["size"][e])
                 outlined_circle(screen, state["color_pallete"][reg["component"]["colour"][e]], (int(pos.x), int(pos.y)), rad)
                 if state["game_state"] == "active":
                     pg.draw.circle(state["new_tick_static_surface"],
@@ -53,9 +53,9 @@ def render(screen, reg, state, font):
 
     # player
     p = state.get("player_eid")
-    if p is not None and p in reg["component"]["position"] and p in reg["component"]["collider"] and state["game_state"] == "active":
+    if p is not None and p in reg["component"]["position"] and p in reg["component"]["size"] and state["game_state"] == "active":
         pos = reg["component"]["position"][p]
-        rad = int(reg["component"]["collider"][p])
+        rad = int(reg["component"]["size"][p])
         outlined_circle(screen, state["color_pallete"][reg["component"]["colour"][p]], (int(pos.x), int(pos.y)), rad)
         if reg["component"]["velocity"][p]:
             pg.draw.circle(state["new_tick_static_surface"],

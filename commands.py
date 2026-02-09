@@ -42,7 +42,7 @@ def player_spawning(reg, state):
     reg["tag"]["player"].add(e)
     reg["component"]["position"][e] = pg.Vector2((S.SCREEN_W * 0.5, S.SCREEN_H * 0.5))
     reg["component"]["velocity"][e]  = pg.Vector2(0, 0)
-    reg["component"]["collider"][e]  = float(S.PLAYER_RADIUS)
+    reg["component"]["size"][e]  = float(S.PLAYER_RADIUS)
     reg["component"]["colour"][e]    = random.randint(0, state["pallete_size"]-1)
     reg["component"]["shape"][e]     = S.SHAPE_PLAYER
 
@@ -56,7 +56,7 @@ def bullet_spawning(reg, state):
     reg["tag"]["bullet"].add(e)
     reg["component"]["position"][e] = position
     reg["component"]["velocity"][e]  = velocity
-    reg["component"]["collider"][e]  = float(S.BULLET_RADIUS)
+    reg["component"]["size"][e]  = float(S.BULLET_RADIUS)
     reg["component"]["colour"][e]    = random.randint(0, state["pallete_size"]-1)
     reg["component"]["shape"][e]     = S.SHAPE_BULLET
 
@@ -66,7 +66,7 @@ def trail_spawning(reg, state, parent_e):
     reg["tag"]["bullet"].add(e)
     reg["component"]["position"][e] = position
     reg["component"]["velocity"][e]  = velocity
-    reg["component"]["collider"][e]  = float(S.BULLET_RADIUS)
+    reg["component"]["size"][e]  = float(S.BULLET_RADIUS)
     reg["component"]["colour"][e]    = random.randint(0, state["pallete_size"]-1)
     reg["component"]["shape"][e]     = S.SHAPE_BULLET
 """

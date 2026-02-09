@@ -77,15 +77,15 @@ def _update_movement_and_bounds(reg, dt):
         reg["component"]["position"][e] = pos
 
         # player: clamp inside window
-        if e in reg["tag"]["player"] and e in reg["component"]["collider"]:
-            rad = reg["component"]["collider"][e]
+        if e in reg["tag"]["player"] and e in reg["component"]["size"]:
+            rad = reg["component"]["size"][e]
             pos.x = clamp(pos.x, rad, S.SCREEN_W - rad)
             pos.y = clamp(pos.y, rad, S.SCREEN_H - rad)
             reg["component"]["position"][e] = pos
 
         # bullets: bounce off window edges
-        if e in reg["tag"]["bullet"] and e in reg["component"]["collider"]:
-            rad = reg["component"]["collider"][e]
+        if e in reg["tag"]["bullet"] and e in reg["component"]["size"]:
+            rad = reg["component"]["size"][e]
 
             if pos.x - rad < 0:
                 pos.x = rad
@@ -121,11 +121,11 @@ def _update_collisions(reg, state):
     # iterate bullets without mutating sets/dicts; enqueue_cmd_with_information destroy/spawn instead
     if state["game_state"] != "death":
         for b in list(reg["tag"]["bullet"]):
-            if b not in reg["component"]["position"] or b not in reg["component"]["collider"]:
+            if b not in reg["component"]["position"] or b not in reg["component"]["size"]:
                 continue
     
             bpos = reg["component"]["position"][b]
-            brad = reg["component"]["collider"][b]
+            brad = reg["component"]["size"][b]
     
             if circles_overlap(ppos, prad, bpos, brad):
                 state["hits"] += 1

@@ -6,24 +6,30 @@ def make_registry():
         "next_entity": 1,
         
         "component": { # e-> data
-            "position":        {},   # e -> pygame.Vector2, position
-            "velocity":        {},   # e -> pygame.Vector2
-            "collider":        {},   # e -> float radius
-            "colour":          {},
+            "position":        {}, # e -> pygame.Vector2,
+            "velocity":        {}, # e -> pygame.Vector2
+            
+            "attached_to":     {}, # e -> id of the object it is attached to
+            "offset":          {},
+            "attached_are":    {},
+            
             "shape":           {},
+            "size":            {},
+            "colour":          {},
+            
+            "texture_name":    {},
+            "current_texture": {}, # e -> number in atlas; not in use
+            
             "mask_type":       {},
             "phase":           {},
             "phase_end":       {},
-            "texture_name":    {},
-            "current_texture": {},
-            "offset":          {},
         },
         
         "tag": { # sets of entities
             "player": set(),
             "bullet": set(),
-            "trail" : set(),
-            "mask"  : set(),
+            "trail":  set(),
+            "mask":   set(),
         },
     }
 
@@ -32,20 +38,11 @@ def create_entity(reg):
     reg["next_entity"] += 1
     return e
 
-def destroy_entity(reg, e):
-    reg["component"]["position"].pop(e, None)
-    reg["component"]["velocity"].pop(e, None)
-    reg["component"]["collider"].pop(e, None)
-    reg["component"]["colour"].pop(e, None)
-    reg["component"]["shape"].pop(e, None)
-    reg["component"]["mask_type"].pop(e, None)
-    reg["component"]["phase"].pop(e, None)
-    reg["component"]["phase_end"].pop(e, None)
-    reg["component"]["texture_name"].pop(e, None)
-    reg["component"]["current_texture"].pop(e, None)
-    reg["component"]["offset"].pop(e, None)
+# to-do: move of entities to the freed-up space
 
-    reg["tag"]["player"].discard(e)
-    reg["tag"]["bullet"].discard(e)
-    reg["tag"]["trail"].discard(e)
-    reg["tag"]["mask"].discard(e)
+def destroy_entity(reg, e):
+    for component in reg["component"]:
+        reg["component"][component].pop(e, None)
+        
+    for tag in reg["tag"]:
+        reg["tag"][tag].discard(e)
