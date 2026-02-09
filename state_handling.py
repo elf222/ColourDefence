@@ -36,7 +36,7 @@ def state_key_processing(reg, state):
         if keys[K.PAUSE]:
             state["game_state"] = "pause"
             return
-        if len(reg["bullet"]) > S.BULLET_DEADLY_MASS:
+        if len(reg["tag"]["bullet"]) > S.BULLET_DEADLY_MASS:
             state["game_state"] = "death"
             return
         

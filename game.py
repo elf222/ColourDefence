@@ -34,7 +34,7 @@ def tick_game(reg, state, dt):
 
 def _input_player(reg, state):
     p = state.get("player_eid")
-    if p is None or p not in reg["velocity"]:
+    if p is None or p not in reg["component"]["velocity"]:
         return
 
     keys = pg.key.get_pressed()
@@ -48,7 +48,7 @@ def _input_player(reg, state):
     if state["game_state"] != "active":
         move = pg.Vector2(0, 0)
 
-    reg["velocity"][p] = move * S.PLAYER_SPEED
+    reg["component"]["velocity"][p] = move * S.PLAYER_SPEED
 
 
 def _input_masks(reg, state): # spawn mask only if they do not exist, stacking is allowed
@@ -69,23 +69,23 @@ def _input_masks(reg, state): # spawn mask only if they do not exist, stacking i
 
 def _update_movement_and_bounds(reg, dt):
     # integrate entities that have velocity+transform
-    for e, vel in list(reg["velocity"].items()):
-        if e not in reg["transform"]:
+    for e, vel in list(reg["component"]["velocity"].items()):
+        if e not in reg["component"]["position"]:
             continue
-        pos = reg["transform"][e]
+        pos = reg["component"]["position"][e]
         pos += vel * dt
-        reg["transform"][e] = pos
+        reg["component"]["position"][e] = pos
 
         # player: clamp inside window
-        if e in reg["player"] and e in reg["collider"]:
-            rad = reg["collider"][e]
+        if e in reg["tag"]["player"] and e in reg["component"]["collider"]:
+            rad = reg["component"]["collider"][e]
             pos.x = clamp(pos.x, rad, S.SCREEN_W - rad)
             pos.y = clamp(pos.y, rad, S.SCREEN_H - rad)
-            reg["transform"][e] = pos
+            reg["component"]["position"][e] = pos
 
         # bullets: bounce off window edges
-        if e in reg["bullet"] and e in reg["collider"]:
-            rad = reg["collider"][e]
+        if e in reg["tag"]["bullet"] and e in reg["component"]["collider"]:
+            rad = reg["component"]["collider"][e]
 
             if pos.x - rad < 0:
                 pos.x = rad
@@ -101,14 +101,14 @@ def _update_movement_and_bounds(reg, dt):
                 pos.y = S.SCREEN_H - rad
                 vel.y = -vel.y
 
-            reg["transform"][e] = pos
-            reg["velocity"][e] = vel
+            reg["component"]["position"][e] = pos
+            reg["component"]["velocity"][e] = vel
             
 
 def _update_attached_objects(reg, state, dt):
-    for mask in reg["mask"]:
-        if state["mask_engagement"][reg["mask_type"][mask]]:
-            reg["transform"][mask] = reg["transform"][state["player_eid"]]
+    for mask in reg["tag"]["mask"]:
+        if state["mask_engagement"][reg["component"]["mask_type"][mask]]:
+            reg["component"]["position"][mask] = reg["component"]["position"][state["player_eid"]]
 
 
 def _update_collisions(reg, state):
@@ -120,33 +120,33 @@ def _update_collisions(reg, state):
 
     # iterate bullets without mutating sets/dicts; enqueue_cmd_with_information destroy/spawn instead
     if state["game_state"] != "death":
-        for b in list(reg["bullet"]):
-            if b not in reg["transform"] or b not in reg["collider"]:
+        for b in list(reg["tag"]["bullet"]):
+            if b not in reg["component"]["position"] or b not in reg["component"]["collider"]:
                 continue
     
-            bpos = reg["transform"][b]
-            brad = reg["collider"][b]
+            bpos = reg["component"]["position"][b]
+            brad = reg["component"]["collider"][b]
     
             if circles_overlap(ppos, prad, bpos, brad):
                 state["hits"] += 1
     
-                reg["colour"][p] = reg["colour"][b]
+                reg["component"]["colour"][p] = reg["component"]["colour"][b]
                 # destroy bullet and spawn a new
                 enqueue_cmd_with_information(cmd_buf, cmd_destroy(b))
                 enqueue_cmd_generic(
                     cmd_buf,
                     cmd_spawn_bullet,
-                    calculate_bullet_spawn_count(len(reg["bullet"])),
+                    calculate_bullet_spawn_count(len(reg["tag"]["bullet"])),
                 )
                 state["mana"]+= S.MANA_PER_HIT
 
 def _manage_masks(reg, state):
     cmd_buf = state["commands"]
     
-    for mask in reg["mask"]:
-        if state["frame"] >= reg["phase_end"][mask]:
+    for mask in reg["tag"]["mask"]:
+        if state["frame"] >= reg["component"]["phase_end"][mask]:
             enqueue_cmd_with_information(cmd_buf, cmd_destroy(mask))
-            state["mask_engagement"][reg["mask_type"][mask]] = False
+            state["mask_engagement"][reg["component"]["mask_type"][mask]] = False
             
     
     

@@ -5,33 +5,26 @@ def make_registry():
     return {
         "next_entity": 1,
         
-        # When updating this update destroy_entity()
-        # components: e -> data
-        "transform":       {},   # e -> pygame.Vector2, position
-        "velocity":        {},   # e -> pygame.Vector2
-        "collider":        {},   # e -> float radius
-        "colour":          {},
-        "shape":           {},
-        "mask_type":       {},
-        "phase":           {},
-        "phase_end":       {},
-        "texture_name":    {},
-        "current_texture": {},
-        "offset":           {},
-        
-        "components": {
-            
+        "component": { # e-> data
+            "position":        {},   # e -> pygame.Vector2, position
+            "velocity":        {},   # e -> pygame.Vector2
+            "collider":        {},   # e -> float radius
+            "colour":          {},
+            "shape":           {},
+            "mask_type":       {},
+            "phase":           {},
+            "phase_end":       {},
+            "texture_name":    {},
+            "current_texture": {},
+            "offset":          {},
         },
         
-        "tags": {
-            
+        "tag": { # sets of entities
+            "player": set(),
+            "bullet": set(),
+            "trail" : set(),
+            "mask"  : set(),
         },
-        
-        # tags: sets of entities
-        "player": set(),
-        "bullet": set(),
-        "trail" : set(),
-        "mask"  : set(),
     }
 
 def create_entity(reg):
@@ -40,19 +33,19 @@ def create_entity(reg):
     return e
 
 def destroy_entity(reg, e):
-    reg["transform"].pop(e, None)
-    reg["velocity"].pop(e, None)
-    reg["collider"].pop(e, None)
-    reg["colour"].pop(e, None)
-    reg["shape"].pop(e, None)
-    reg["mask_type"].pop(e, None)
-    reg["phase"].pop(e, None)
-    reg["phase_end"].pop(e, None)
-    reg["texture_name"].pop(e, None)
-    reg["current_texture"].pop(e, None)
-    reg["offset"].pop(e, None)
+    reg["component"]["position"].pop(e, None)
+    reg["component"]["velocity"].pop(e, None)
+    reg["component"]["collider"].pop(e, None)
+    reg["component"]["colour"].pop(e, None)
+    reg["component"]["shape"].pop(e, None)
+    reg["component"]["mask_type"].pop(e, None)
+    reg["component"]["phase"].pop(e, None)
+    reg["component"]["phase_end"].pop(e, None)
+    reg["component"]["texture_name"].pop(e, None)
+    reg["component"]["current_texture"].pop(e, None)
+    reg["component"]["offset"].pop(e, None)
 
-    reg["player"].discard(e)
-    reg["bullet"].discard(e)
-    reg["trail"].discard(e)
-    reg["mask"].discard(e)
+    reg["tag"]["player"].discard(e)
+    reg["tag"]["bullet"].discard(e)
+    reg["tag"]["trail"].discard(e)
+    reg["tag"]["mask"].discard(e)

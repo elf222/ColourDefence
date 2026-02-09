@@ -28,38 +28,38 @@ def outlined_circle(
 
 def render_masks(screen, reg, state):
     animation_phase = (state["frame"] * S.ANIMATION_FPS) // (S.TARGET_FPS)
-    for mask in reg["mask"]:
-        frame = get_frame_with_alpha(state["game_atlases"][reg["texture_name"][mask]]["frames"],
+    for mask in reg["tag"]["mask"]:
+        frame = get_frame_with_alpha(state["game_atlases"][reg["component"]["texture_name"][mask]]["frames"],
             animation_phase,
-            texture_settings.game[reg["texture_name"][mask]]["alpha"])
+            texture_settings.game[reg["component"]["texture_name"][mask]]["alpha"])
         
-        screen.blit(frame, (reg["transform"][state["player_eid"]]) - reg["offset"][mask])
+        screen.blit(frame, (reg["component"]["position"][state["player_eid"]]) - reg["component"]["offset"][mask])
 
 def render(screen, reg, state, font):
     screen.fill(S.COLOUR_BACKGROUND)
     screen.blit(state["cumulative_static_surface"], (0, 0))
     # bullets
     if state["game_state"] != "pause":
-        for e in reg["bullet"]:
-            if e in reg["transform"] and e in reg["collider"]:
-                pos = reg["transform"][e]
-                rad = int(reg["collider"][e])
-                outlined_circle(screen, state["color_pallete"][reg["colour"][e]], (int(pos.x), int(pos.y)), rad)
+        for e in reg["tag"]["bullet"]:
+            if e in reg["component"]["position"] and e in reg["component"]["collider"]:
+                pos = reg["component"]["position"][e]
+                rad = int(reg["component"]["collider"][e])
+                outlined_circle(screen, state["color_pallete"][reg["component"]["colour"][e]], (int(pos.x), int(pos.y)), rad)
                 if state["game_state"] == "active":
                     pg.draw.circle(state["new_tick_static_surface"],
-                        add_alpha(state["color_pallete"][reg["colour"][e]], S.TRAIL_ALPHA_BULLET),
+                        add_alpha(state["color_pallete"][reg["component"]["colour"][e]], S.TRAIL_ALPHA_BULLET),
                         (int(pos.x), int(pos.y)),
                         rad)
 
     # player
     p = state.get("player_eid")
-    if p is not None and p in reg["transform"] and p in reg["collider"] and state["game_state"] == "active":
-        pos = reg["transform"][p]
-        rad = int(reg["collider"][p])
-        outlined_circle(screen, state["color_pallete"][reg["colour"][p]], (int(pos.x), int(pos.y)), rad)
-        if reg["velocity"][p]:
+    if p is not None and p in reg["component"]["position"] and p in reg["component"]["collider"] and state["game_state"] == "active":
+        pos = reg["component"]["position"][p]
+        rad = int(reg["component"]["collider"][p])
+        outlined_circle(screen, state["color_pallete"][reg["component"]["colour"][p]], (int(pos.x), int(pos.y)), rad)
+        if reg["component"]["velocity"][p]:
             pg.draw.circle(state["new_tick_static_surface"],
-                add_alpha(state["color_pallete"][reg["colour"][p]], S.TRAIL_ALPHA_PLAYER),
+                add_alpha(state["color_pallete"][reg["component"]["colour"][p]], S.TRAIL_ALPHA_PLAYER),
                 (int(pos.x), int(pos.y)),
                 rad)
     

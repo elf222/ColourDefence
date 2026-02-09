@@ -71,8 +71,8 @@ def calculate_bullet_spawn_count(current_bullet_count) -> int:
     return 1
 
 def entity_exists(reg, state, component, property):
-    for e in reg[component]:
-        if reg[component][e] == property:
+    for e in reg["component"][component]:
+        if reg["component"][component][e] == property:
             return True
 
     return False
