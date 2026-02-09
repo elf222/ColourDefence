@@ -1,3 +1,8 @@
+import sys
+print("PYTHON:", sys.executable)
+print("VERSION:", sys.version)
+print("PATH0:", sys.path[0])
+"""
 import asyncio
 
 import pygame as pg
@@ -9,7 +14,7 @@ from game import tick_game
 from initalisation import init_game
 from render import render
 from state_handling import state_key_processing
-import FPS_track
+# import FPS_track
 
 async def main():
     screen, clock, font = init_app()
@@ -17,7 +22,7 @@ async def main():
     state["game_state"] = "active"
 
     # process_commands(reg, state)
-    fps = FPS_track.FPSTracker()
+    # fps = FPS_track.FPSTracker()
 
     running = True
     while running:
@@ -27,8 +32,8 @@ async def main():
             running = False
             continue
 
-        # dt = clock.tick(S.TARGET_FPS) / 1000.0 
-        dt = fps.tick(S.TARGET_FPS)
+        dt = clock.tick(S.TARGET_FPS) / 1000.0 
+        # dt = fps.tick(S.TARGET_FPS)
 
         state_key_processing(reg, state)
         process_commands(reg, state)
@@ -36,7 +41,7 @@ async def main():
             tick_game(reg, state, dt)
         render(screen, reg, state, font)
 
-        fps.draw(screen)
+        # fps.draw(screen)
         
         pg.display.flip()
 
@@ -47,3 +52,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+"""

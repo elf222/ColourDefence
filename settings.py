@@ -1,6 +1,6 @@
 # settings.py
 SCREEN_W, SCREEN_H = 900, 520
-TARGET_FPS = 25
+TARGET_FPS = 120
 
 ANIMATION_FPS = 4
 
@@ -29,24 +29,40 @@ COLOUR_VARIETY_MAX = 10
 SHAPE_BULLET = "circle"
 SHAPE_PLAYER = "circle"
 
-TRAIL_ALPHA_PLAYER = 45
-TRAIL_ALPHA_BULLET = 20
-FRAMES_PER_DARKENING = 3
+TRAIL_ALPHA_PLAYER = 25
+TRAIL_ALPHA_BULLET = 10
+FRAMES_PER_DARKENING = 10
 
 BASE_BULLET_SPAWN = 2
 SPAWN_DECAY_FACTOR = 0.02
 MIN_SPAWN_COUNT = 1
 MAX_SPAWN_COUNT = 4
 
+# key : parameters
 MASKS = {
     "1" : {
         "name" : "shield",
-        "cost" : 100,
+        "cost" : 10,
         "active_phase_duration": 5
     },
     "2" : {
         "name" : "hat_propeller",
-        "cost" : 100,
-        "active_phase_duration": 15
+        "cost" : 10,
+        "active_phase_duration": 5
+    },
+    "3" : {
+        "name" : "vortex",
+        "cost" : 10,
+        "active_phase_duration": 5
+    },
+    "4" : {
+        "name" : "medical",
+        "cost" : 10,
+        "active_phase_duration": 5
+    },
+    "5" : {
+        "name" : "sunglasses",
+        "cost" : 10,
+        "active_phase_duration": 5
     },
 }

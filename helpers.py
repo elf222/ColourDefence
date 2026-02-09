@@ -1,9 +1,7 @@
 # helpers.py
-import math
-import random
-#from functools import lru_cache
 
-#from sys import maxsize
+import random
+
 import pygame as pg
 
 import settings as S
@@ -63,14 +61,13 @@ def make_up_colours(n=10):
     return tuple(rand_colour_vivid() for _ in range(n))
 
 
-# @lru_cache(maxsize=None)
 def calculate_bullet_spawn_count(current_bullet_count) -> int:
     """Calculate dynamic bullet spawn count based on current game state"""
     # More bullets in game = fewer new bullets per hit
     if current_bullet_count < S.BULLET_CRITICAL_MASS:
         return S.BULLET_SPAWN_AT_HIT
     if current_bullet_count <S.BULLET_MAX_MASS:
-        return S.BULLET_SPAWN_AT_HIT*3
+        return S.BULLET_SPAWN_AT_HIT
     return 1
 
 def entity_exists(reg, state, component, property):

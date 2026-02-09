@@ -2,7 +2,7 @@ import pygame as pg
 
 import settings as S
 from helpers import add_alpha
-from atlas import frame_at, frame_with_alpha
+from atlas import get_frame_with_alpha
 import texture_settings
 
 overlay = pg.Surface((S.SCREEN_W, S.SCREEN_W), pg.SRCALPHA)
@@ -27,11 +27,10 @@ def outlined_circle(
 )
 
 def render_masks(screen, reg, state):
-    frame = state["frame"] * S.ANIMATION_FPS // (S.TARGET_FPS) 
+    frame = (state["frame"] * S.ANIMATION_FPS) // (S.TARGET_FPS)#
     for mask in reg["mask"]:
-        screen.blit(frame_with_alpha(state["game_atlases"][reg["texture_name"][mask]]["frames"].frames, int(frame),
-            texture_settings.game[reg["texture_name"][mask]]["alpha"]),
-            (reg["transform"][state["player_eid"]]) - reg["ofset"][mask]) 
+        screen.blit(get_frame_with_alpha(state["game_atlases"][reg["texture_name"][mask]]["frames"], frame, texture_settings.game[reg["texture_name"][mask]]["alpha"]),
+            (reg["transform"][state["player_eid"]]) - reg["ofset"][mask])
 
 def render(screen, reg, state, font):
     screen.fill(S.COLOUR_BACKGROUND)
@@ -74,4 +73,4 @@ def render(screen, reg, state, font):
         screen.blit(txt, (12, 10))
     
     if state["game_state"] == "death":
-        screen.blit(frame_with_alpha(state["game_atlases"]["screen_death"]["frames"].frames, 0, 255), (0, 0))
+        screen.blit(get_frame_with_alpha(state["game_atlases"]["screen_death"]["frames"], 0, 255), (0, 0))

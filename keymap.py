@@ -12,7 +12,8 @@ RESTART = pg.K_r
 PAUSE = pg.K_ESCAPE
 GO = pg.K_g
 
+# nth mask to n key
 KEY_TO_MASK = {
-        pg.K_1: "1",
-        pg.K_2: "2",
-    }
+    getattr(pg, f"K_{i}"): str(i)
+    for i in range(1, len(S.MASKS) + 1)
+}
