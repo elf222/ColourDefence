@@ -9,8 +9,8 @@ from commands import (
     cmd_destroy,
     cmd_spawn_bullet,
     cmd_spawn_masks,
-    enqueue,
-    enqueue_n,
+    enqueue_cmd_with_information,
+    enqueue_cmd_generic,
 )
 from helpers import calculate_bullet_spawn_count, circles_overlap, clamp
 from mask_bahaviour import masked_player_hitbox
@@ -22,7 +22,7 @@ def tick_game(reg, state, dt):
     """Advance game logic by dt seconds.
 
     This function is allowed to mutate component data (movement, velocity, etc.).
-    But it must NOT create/destroy entities directly — it enqueues commands instead.
+    But it must NOT create/destroy entities directly — it enqueue_cmd_with_informations commands instead.
     """
     _input_player(reg, state)
     _update_movement_and_bounds(reg, dt)
@@ -64,7 +64,7 @@ def _input_masks(reg, state): # spawn mask only if they do not exist, stacking i
     if nothing_new:
         return
 
-    enqueue_n(state["commands"], cmd_spawn_masks)
+    enqueue_cmd_generic(state["commands"], cmd_spawn_masks)
 
 
 def _update_movement_and_bounds(reg, dt):
@@ -118,7 +118,7 @@ def _update_collisions(reg, state):
 
     cmd_buf = state["commands"]
 
-    # iterate bullets without mutating sets/dicts; enqueue destroy/spawn instead
+    # iterate bullets without mutating sets/dicts; enqueue_cmd_with_information destroy/spawn instead
     if state["game_state"] != "death":
         for b in list(reg["bullet"]):
             if b not in reg["transform"] or b not in reg["collider"]:
@@ -132,8 +132,8 @@ def _update_collisions(reg, state):
     
                 reg["colour"][p] = reg["colour"][b]
                 # destroy bullet and spawn a new
-                enqueue(cmd_buf, cmd_destroy(b))
-                enqueue_n(
+                enqueue_cmd_with_information(cmd_buf, cmd_destroy(b))
+                enqueue_cmd_generic(
                     cmd_buf,
                     cmd_spawn_bullet,
                     calculate_bullet_spawn_count(len(reg["bullet"])),
@@ -145,7 +145,7 @@ def _manage_masks(reg, state):
     
     for mask in reg["mask"]:
         if state["frame"] >= reg["phase_end"][mask]:
-            enqueue(cmd_buf, cmd_destroy(mask))
+            enqueue_cmd_with_information(cmd_buf, cmd_destroy(mask))
             state["mask_engagement"][reg["mask_type"][mask]] = False
             
     

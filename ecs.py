@@ -17,8 +17,16 @@ def make_registry():
         "phase_end":       {},
         "texture_name":    {},
         "current_texture": {},
-        "ofset":           {},
-
+        "offset":           {},
+        
+        "components": {
+            
+        },
+        
+        "tags": {
+            
+        },
+        
         # tags: sets of entities
         "player": set(),
         "bullet": set(),
@@ -42,7 +50,7 @@ def destroy_entity(reg, e):
     reg["phase_end"].pop(e, None)
     reg["texture_name"].pop(e, None)
     reg["current_texture"].pop(e, None)
-    reg["ofset"].pop(e, None)
+    reg["offset"].pop(e, None)
 
     reg["player"].discard(e)
     reg["bullet"].discard(e)

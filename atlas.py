@@ -1,7 +1,6 @@
 # atlas_min.py
 import pygame as pg
 
-
 def load_game_atlas(name, cfg, folder):
     """
     Load folder + name + ".png" and cut into tiles of size (cfg["W"], cfg["H"]).

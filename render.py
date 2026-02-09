@@ -27,10 +27,13 @@ def outlined_circle(
 )
 
 def render_masks(screen, reg, state):
-    frame = (state["frame"] * S.ANIMATION_FPS) // (S.TARGET_FPS)#
+    animation_phase = (state["frame"] * S.ANIMATION_FPS) // (S.TARGET_FPS)
     for mask in reg["mask"]:
-        screen.blit(get_frame_with_alpha(state["game_atlases"][reg["texture_name"][mask]]["frames"], frame, texture_settings.game[reg["texture_name"][mask]]["alpha"]),
-            (reg["transform"][state["player_eid"]]) - reg["ofset"][mask])
+        frame = get_frame_with_alpha(state["game_atlases"][reg["texture_name"][mask]]["frames"],
+            animation_phase,
+            texture_settings.game[reg["texture_name"][mask]]["alpha"])
+        
+        screen.blit(frame, (reg["transform"][state["player_eid"]]) - reg["offset"][mask])
 
 def render(screen, reg, state, font):
     screen.fill(S.COLOUR_BACKGROUND)
