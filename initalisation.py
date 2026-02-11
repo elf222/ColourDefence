@@ -23,6 +23,8 @@ def init_game():
         "game_state": "pause",
         "frame": 0,
         
+        "running": True,
+        
         "hits": 0,
         "mana": 0,
         

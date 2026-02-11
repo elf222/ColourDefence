@@ -10,6 +10,7 @@ RIGHT = pg.K_d
 
 RESTART = pg.K_r
 PAUSE = pg.K_ESCAPE
+EXIT = pg.K_RETURN
 GO = pg.K_g
 
 # nth mask to n key

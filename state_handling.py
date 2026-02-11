@@ -16,10 +16,13 @@ def reload_dict(reg: dict, state: dict):
     replace_dict_contents(reg, reg_new)
     replace_dict_contents(state, state_new)
 
-def state_key_processing(reg, state):
+def state_key_processing(reg, state, ):
     keys = pg.key.get_pressed()
     
     if state["game_state"] == "pause":
+        if keys[K.EXIT]:
+            state["running"] = False
+            return
         if keys[K.RESTART]:
             reload_dict(reg, state)
             state["game_state"] = "active"
