@@ -1,9 +1,6 @@
 # helpers.py
-import math
+
 import random
-from functools import lru_cache
-from multiprocessing.spawn import import_main_path
-from sys import maxsize
 
 import pygame as pg
 
@@ -46,7 +43,7 @@ def aim_at(origin, target):
     if direction.length_squared() == 0:
         return random_vel_norm()
     return direction.normalize()
-    
+
 def add_alpha(color, alpha):
     if len(color) == 4:
         return color[:3] + (alpha,)
@@ -64,16 +61,18 @@ def make_up_colours(n=10):
     return tuple(rand_colour_vivid() for _ in range(n))
 
 
-@lru_cache(maxsize=None)
 def calculate_bullet_spawn_count(current_bullet_count) -> int:
     """Calculate dynamic bullet spawn count based on current game state"""
     # More bullets in game = fewer new bullets per hit
-    spawn_count = S.BASE_BULLET_SPAWN - (current_bullet_count * S.SPAWN_DECAY_FACTOR)
-    return max(S.MIN_SPAWN_COUNT, min(S.MAX_SPAWN_COUNT, round(spawn_count)))
+    if current_bullet_count < S.BULLET_CRITICAL_MASS:
+        return S.BULLET_SPAWN_AT_HIT
+    if current_bullet_count <S.BULLET_MAX_MASS:
+        return S.BULLET_SPAWN_AT_HIT
+    return 1
 
 def entity_exists(reg, state, component, property):
-    for e in reg[component]:
-        if reg[component][e] == property:
+    for e in reg["component"][component]:
+        if reg["component"][component][e] == property:
             return True
-            
+
     return False

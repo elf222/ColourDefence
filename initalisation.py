@@ -7,7 +7,7 @@ import texture_settings
 from commands import (
     cmd_spawn_bullet,
     cmd_spawn_player,
-    enqueue_n,
+    enqueue_cmd_generic,
     make_command_buffer,
 )
 from ecs import make_registry
@@ -20,6 +20,7 @@ def init_game():
     reg = make_registry()
     colour_pallete_size = random.randint(S.COLOUR_VARIETY_MIN, S.COLOUR_VARIETY_MAX)
     state = {
+        "game_state": "pause",
         "frame": 0,
         
         "hits": 0,
@@ -45,7 +46,7 @@ def init_game():
         }
     }
 
-    enqueue_n(state["commands"], cmd_spawn_player)
-    enqueue_n(state["commands"], cmd_spawn_bullet, S.BULLET_START_COUNT)
+    enqueue_cmd_generic(state["commands"], cmd_spawn_player)
+    enqueue_cmd_generic(state["commands"], cmd_spawn_bullet, S.BULLET_START_COUNT)
 
     return reg, state

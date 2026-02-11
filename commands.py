@@ -13,10 +13,10 @@ from helpers import aim_at, entity_exists, random_edge_position
 def make_command_buffer():
     return []
 
-def enqueue(cmd_buf, cmd): #
+def enqueue_cmd_with_information(cmd_buf, cmd):
     cmd_buf.append(cmd)
 
-def enqueue_n (cmd_buf, factory, n=1): # so far used for spawning in game-independent state
+def enqueue_cmd_generic(cmd_buf, factory, n=1): # so far used for spawning in game-independent state
     cmd_buf.extend(factory() for _ in range(n))
 
 # --- command constructors (plain dicts) ---
@@ -39,48 +39,53 @@ def cmd_spawn_masks():
 
 def player_spawning(reg, state):
     e = create_entity(reg)
-    reg["player"].add(e)
-    reg["transform"][e] = pg.Vector2((S.SCREEN_W * 0.5, S.SCREEN_H * 0.5))
-    reg["velocity"][e]  = pg.Vector2(0, 0)
-    reg["collider"][e]  = float(S.PLAYER_RADIUS)
-    reg["colour"][e]    = random.randint(0, state["pallete_size"]-1)
-    reg["shape"][e]     = S.SHAPE_PLAYER
+    reg["tag"]["player"].add(e)
+    reg["component"]["position"][e] = pg.Vector2((S.SCREEN_W * 0.5, S.SCREEN_H * 0.5))
+    reg["component"]["velocity"][e]  = pg.Vector2(0, 0)
+    reg["component"]["size"][e]  = float(S.PLAYER_RADIUS)
+    reg["component"]["colour"][e]    = random.randint(0, state["pallete_size"]-1)
+    reg["component"]["shape"][e]     = S.SHAPE_PLAYER
 
     state["player_eid"] = e
 
 def bullet_spawning(reg, state):
     position = random_edge_position(S.BULLET_RADIUS)
-    velocity = aim_at(position, reg["transform"][state["player_eid"]])*random.uniform(S.BULLET_SPEED_MIN, S.BULLET_SPEED_MAX)
+    velocity = aim_at(position, reg["component"]["position"][state["player_eid"]])*random.uniform(S.BULLET_SPEED_MIN, S.BULLET_SPEED_MAX)
 
     e = create_entity(reg)
-    reg["bullet"].add(e)
-    reg["transform"][e] = position
-    reg["velocity"][e]  = velocity
-    reg["collider"][e]  = float(S.BULLET_RADIUS)
-    reg["colour"][e]    = random.randint(0, state["pallete_size"]-1)
-    reg["shape"][e]     = S.SHAPE_BULLET
+    reg["tag"]["bullet"].add(e)
+    reg["component"]["position"][e] = position
+    reg["component"]["velocity"][e]  = velocity
+    reg["component"]["size"][e]  = float(S.BULLET_RADIUS)
+    reg["component"]["colour"][e]    = random.randint(0, state["pallete_size"]-1)
+    reg["component"]["shape"][e]     = S.SHAPE_BULLET
 
 """
 def trail_spawning(reg, state, parent_e):
     e = create_entity(reg)
-    reg["bullet"].add(e)
-    reg["transform"][e] = position
-    reg["velocity"][e]  = velocity
-    reg["collider"][e]  = float(S.BULLET_RADIUS)
-    reg["colour"][e]    = random.randint(0, state["pallete_size"]-1)
-    reg["shape"][e]     = S.SHAPE_BULLET
+    reg["tag"]["bullet"].add(e)
+    reg["component"]["position"][e] = position
+    reg["component"]["velocity"][e]  = velocity
+    reg["component"]["size"][e]  = float(S.BULLET_RADIUS)
+    reg["component"]["colour"][e]    = random.randint(0, state["pallete_size"]-1)
+    reg["component"]["shape"][e]     = S.SHAPE_BULLET
 """
 
 def mask_spawning(reg, state, mask_type):
     e = create_entity(reg)
-    reg["mask"].add(e)
-    reg["transform"][e] = reg["transform"][state["player_eid"]]
-    reg["mask_type"][e] = mask_type
-    reg["phase"][e] = "active"
-    reg["phase_end"][e] = state["frame"] + int(S.MASKS[mask_type]["active_phase_duration"]*S.TARGET_FPS)
-    reg["texture_name"][e] = "mask_" + S.MASKS[mask_type]["name"]
-    reg["current_texture"][e] = 0
-    reg["ofset"][e] = pg.math.Vector2(texture_settings.game[reg["texture_name"][e]]["ofsetX"], texture_settings.game[reg["texture_name"][e]]["ofsetY"]) + pg.math.Vector2(texture_settings.game[reg["texture_name"][e]]["W"], texture_settings.game[reg["texture_name"][e]]["H"])/2
+    reg["tag"]["mask"].add(e)
+    reg["component"]["position"][e] = reg["component"]["position"][state["player_eid"]]
+    reg["component"]["mask_type"][e] = mask_type
+    reg["component"]["phase"][e] = "active"
+    reg["component"]["phase_end"][e] = state["frame"] + int(S.MASKS[mask_type]["active_phase_duration"]*S.TARGET_FPS)
+    reg["component"]["texture_name"][e] = "mask_" + S.MASKS[mask_type]["name"]
+    reg["component"]["current_texture"][e] = 0
+    reg["component"]["offset"][e] =  pg.math.Vector2(
+                            texture_settings.game[reg["component"]["texture_name"][e]]["offsetX"],
+                            texture_settings.game[reg["component"]["texture_name"][e]]["offsetY"]) \
+                        + pg.math.Vector2(
+                            texture_settings.game[reg["component"]["texture_name"][e]]["W"],
+                            texture_settings.game[reg["component"]["texture_name"][e]]["H"]) / 2
 def masks_spawning(reg, state):
     for mask in state["mask_engagement"]:
         if state["mask_engagement"][mask] and not entity_exists(reg, state, "mask_type", mask):
