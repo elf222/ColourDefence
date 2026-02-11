@@ -1,5 +1,6 @@
 # atlas_min.py
 import pygame as pg
+from pathlib import Path
 
 def load_game_atlas(name, cfg, folder):
     """
@@ -8,7 +9,11 @@ def load_game_atlas(name, cfg, folder):
     Returns:
         {"frames": [Surface, ...], "length": int}
     """
-    atlas = pg.image.load(folder + name + ".png").convert_alpha()  # display must be set first
+    
+    
+    
+    atlas_path = folder / f"{name}.png"
+    atlas = pg.image.load(atlas_path).convert_alpha()  # display must be set first
 
     fw, fh = cfg["W"], cfg["H"]
     aw, ah = atlas.get_size()
