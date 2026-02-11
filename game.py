@@ -17,7 +17,6 @@ from mask_bahaviour import masked_player_hitbox
 
 # ------------------ tick (input + logic) ------------------
 
-
 def tick_game(reg, state, dt):
     """Advance game logic by dt seconds.
 

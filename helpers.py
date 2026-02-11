@@ -22,7 +22,11 @@ def circles_overlap(p1, r1, p2, r2):
 
 
 def random_edge_position(radius):
-    edge = random.choice(["top", "bottom", "left", "right"])
+    edge = random.choices(
+        ["top", "bottom", "left", "right"],
+        weights=[S.SCREEN_W, S.SCREEN_H, S.SCREEN_W, S.SCREEN_H]
+    )[0]
+
 
     if edge == "top":
         return pg.Vector2(random.uniform(radius, S.SCREEN_W - radius), radius)
@@ -44,31 +48,36 @@ def aim_at(origin, target):
         return random_vel_norm()
     return direction.normalize()
 
+
 def add_alpha(color, alpha):
     if len(color) == 4:
         return color[:3] + (alpha,)
     return (*color, alpha)
 
+def rand_colour():
+    r = random.randint(0, 255)
+    g = random.randint(0, 255)
+    b = random.randint(0, 255)
+    return (r, g, b)
 
 def rand_colour_vivid():
-    r = int(100 + 155 * random.random())
-    g = int(100 + 155 * random.random())
-    b = int(100 + 155 * random.random())
+    r = random.randint(100, 255)
+    g = random.randint(100, 255)
+    b = random.randint(100, 255)
     return (r, g, b)
 
 
 def make_up_colours(n=10):
     return tuple(rand_colour_vivid() for _ in range(n))
 
-
 def calculate_bullet_spawn_count(current_bullet_count) -> int:
     """Calculate dynamic bullet spawn count based on current game state"""
     # More bullets in game = fewer new bullets per hit
     if current_bullet_count < S.BULLET_CRITICAL_MASS:
         return S.BULLET_SPAWN_AT_HIT
-    if current_bullet_count <S.BULLET_MAX_MASS:
-        return S.BULLET_SPAWN_AT_HIT
-    return 1
+    if current_bullet_count <S.BULLET_MAX_MASS-5:
+        return S.BULLET_SPAWN_AT_HIT*3
+    return 0
 
 def entity_exists(reg, state, component, property):
     for e in reg["component"][component]:
