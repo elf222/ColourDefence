@@ -1,8 +1,10 @@
 # texture_settings.py
 
+from pathlib import Path
+
 import settings as S
 
-texture_folder = "assets/images/"
+texture_folder = Path("assets") / "images"
 
 # offset is math coordinate standard Up, Right = +
 game = {
